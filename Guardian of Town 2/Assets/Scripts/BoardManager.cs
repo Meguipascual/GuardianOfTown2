@@ -12,13 +12,16 @@ public class BoardManager : MonoBehaviour
     [SerializeField] private int _height;
     [SerializeField] private Tile[] _groundTiles;
     [SerializeField] private Tile[] _wallTiles;
+    [SerializeField] private PlayerController _player;
+    private Grid _grid;
     private Tilemap _tileMap;
     private CellData[,] _boardData;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void Init()
     {
         _tileMap = GetComponentInChildren<Tilemap>();
+        _grid = GetComponentInChildren<Grid>();
         _boardData = new CellData[_width, _height];
 
         for (int y = 0; y < _height; ++y)
@@ -42,5 +45,21 @@ public class BoardManager : MonoBehaviour
                 _tileMap.SetTile(new Vector3Int(x, y, 0), tile);
             }
         }
+    }
+
+    public Vector3 CellToWorld (Vector2Int cellIndex)
+    {
+        return _grid.GetCellCenterWorld((Vector3Int) cellIndex);
+    }
+
+    public CellData GetCellData(Vector2Int cellIndex)
+    {
+        if (cellIndex.x < 0 || cellIndex.x >= _width
+            || cellIndex.y < 0 || cellIndex.y >= _height)
+        {
+            return null;
+        }
+
+        return _boardData[cellIndex.x, cellIndex.y];
     }
 }
